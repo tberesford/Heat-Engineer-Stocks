@@ -4,9 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const stock_1 = __importDefault(require("./api/stock"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-app.get("/stock", (req, res) => {
-    res.send({ timestamp: 0, price: 0, symbol: "HEAT" });
-});
+app.use("/api/stock/current", stock_1.default);
 exports.default = app;

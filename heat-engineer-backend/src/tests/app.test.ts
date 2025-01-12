@@ -1,5 +1,6 @@
 import axios from "axios";
 import HeatEngineerStockModel from "../models/stockModel";
+import { Consumer, Kafka, Producer } from "kafkajs";
 
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -21,6 +22,53 @@ describe("Get /heat-stock", () => {
         const response = await axios.get("/api/stock/current");
         expect(response.data).toEqual(mockData);
     });
+})
 
-    
+describe("Setup Kafka", () => {
+    let consumer: Consumer;
+    let producer: Producer;
+    const kafka = new Kafka({
+        clientId: 'heat-stock-app',
+        brokers: ['localhost:9092']
+    });
+
+    beforeAll(async () => {
+        consumer = kafka.consumer({groupId: "test-group"});
+        producer = kafka.producer();
+        
+        await consumer.connect();
+        await consumer.subscribe({topic: "first_topic"});
+
+        await producer.connect();
+    });
+
+    afterAll(async () => {
+        await consumer.disconnect();
+        await producer.disconnect();
+    })
+
+    test("Connect to Kafka Broker", () => {
+        expect(kafka).toBeInstanceOf(Kafka);
+    });
+
+    test("Emitting to topic", async () => {
+        const message = "Hello world!";
+        const receivedMessages: string[] = [];
+
+        await consumer.run({
+            eachMessage: async ({ topic, partition, message, heartbeat, pause }) => {
+                const receivedMessage = message.value?.toString(); 
+                receivedMessages.push(receivedMessage!);
+            }
+        });
+
+        await producer.send({
+            topic: "first_topic",
+            messages: [{value: message}]
+        });
+
+        await new Promise((resolve) => { setTimeout(resolve, 3000)});
+
+        expect(receivedMessages).toContain(message);
+    });
 })

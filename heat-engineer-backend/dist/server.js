@@ -14,9 +14,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = __importDefault(require("./app"));
 const StockController_1 = __importDefault(require("./controllers/StockController"));
+const WebsocketService_1 = __importDefault(require("./services/WebsocketService"));
 const port = 3001;
 const stockControl = new StockController_1.default();
+const webService = new WebsocketService_1.default();
 app_1.default.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
     yield stockControl.onInterval();
+    yield webService.onConnection();
     console.log(`Listening on port http:/localhost:${port}/. Controller has started`);
 }));

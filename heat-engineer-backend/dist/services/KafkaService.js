@@ -2,11 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StockConsumer = exports.StockProducer = exports.Broker = void 0;
 const kafkajs_1 = require("kafkajs");
+let kafka;
 const Broker = () => {
-    const kafka = new kafkajs_1.Kafka({
-        clientId: "heat-stock-app",
-        brokers: ["localhost:9092"]
-    });
+    if (!kafka) {
+        kafka = new kafkajs_1.Kafka({
+            clientId: "heat-stock-app",
+            brokers: ["localhost:9092"]
+        });
+    }
     return kafka;
 };
 exports.Broker = Broker;
@@ -24,6 +27,7 @@ exports.StockProducer = StockProducer;
 const StockConsumer = (kafka) => {
     // Consumes messages
     const consumer = kafka.consumer({ groupId: "test-group" });
+    consumer.subscribe({ topic: "first_topic", fromBeginning: true });
     return consumer;
     // await consumer.connect();
     // await consumer.subscribe( {topic: "first_topic", fromBeginning: true} );

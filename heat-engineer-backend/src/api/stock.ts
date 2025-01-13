@@ -1,5 +1,4 @@
 import { Router, Request, Response } from 'express';
-import HeatEngineerStockModel from '../models/stockModel';
 import Fetch from '../services/FetchService';
 
 
@@ -20,14 +19,6 @@ stockRouter.post("/stock/:price/time/:timestamp/key/:symbol", async (req: Reques
         const stock = req.params.price?.toString() || "";
         const time = req.params.timestamp;
         const key = req.params.symbol;
-        
-        console.log({stock, time, key});
-        // const emit = await Producer(kafka, stock);
-        // if(emit){
-        //     res.send({message: "Test", status: 200});
-        // } else {
-        //     throw new Error("Internal server error");
-        // }
     } catch (error) {
         throw new Error("Failed to emit to data stream");
     }

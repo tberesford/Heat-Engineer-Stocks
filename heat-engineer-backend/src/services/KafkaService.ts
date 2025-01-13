@@ -1,13 +1,16 @@
 import { Kafka, Partitioners } from "kafkajs";
 
+let kafka: Kafka;
+
 const Broker = () => {
-    const kafka = new Kafka({
-        clientId: "heat-stock-app",
-        brokers: ["localhost:9092"]
-    })
+    if(!kafka){
+        kafka = new Kafka({
+            clientId: "heat-stock-app",
+            brokers: ["localhost:9092"]
+        })
+    }
     return kafka;
 }
-
 
 const StockProducer = (kafka: Kafka) => {
     // Producer to emit messages to broker
@@ -20,21 +23,10 @@ const StockProducer = (kafka: Kafka) => {
 }
 
 const StockConsumer = (kafka: Kafka) => {
-    // Consumes messages
+    // Consumer subscribed to topic
     const consumer = kafka.consumer( {groupId: "test-group"} );
+    consumer.subscribe({topic: "first_topic", fromBeginning: true});
     return consumer;
-    // await consumer.connect();
-    // await consumer.subscribe( {topic: "first_topic", fromBeginning: true} );
-    // return consumer;
-    // await consumer.run({
-    //     eachMessage: async ({ topic, partition, message, heartbeat, pause }) => {
-    //         console.log({
-    //             key: message.key?.toString(),
-    //             value: message.value?.toString(),
-    //             headers: message.headers,
-    //         })
-    //     },
-    // })
 }
 
 export { Broker, StockProducer, StockConsumer };

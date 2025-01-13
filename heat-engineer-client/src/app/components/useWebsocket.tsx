@@ -1,24 +1,21 @@
 'use client';
-import { useState, useEffect } from "react";
+import { useEffect, Dispatch, SetStateAction } from "react";
 import HeatEngineerStockModel from "../models/stockModel";
 import FormatData from "../services/FormatData";
 
-const WebsocketComponent = () => {
+const useWebsocket = (setContextData: Dispatch<SetStateAction<HeatEngineerStockModel | null>>) => {
     const wsUrl = "ws://localhost:8080/";
-    // const [data, setData] = useState<HeatEngineerStockModel>();
-    // const [error, setError] = useState(null);
-    
     useEffect(() => {
         const ws = new WebSocket(wsUrl);
+        ws.onopen = () => {
+            console.log("WebSocket connection opened.");
+        };
+
         ws.onmessage = (event) => {
-            const result = FormatData<HeatEngineerStockModel>(event.data);
-            // if(typeof(result) !== "string"){
-            //     setData(result);
-            // } else {
-            //     setError(result);
-            // }
+            const result = FormatData<HeatEngineerStockModel>(JSON.parse(event.data));
+            setContextData(result);
         }
-    }, []);
+    }, [setContextData]);
 }
 
-export default WebsocketComponent;
+export default useWebsocket;

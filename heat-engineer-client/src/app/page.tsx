@@ -1,7 +1,6 @@
 import Image from "next/image";
-import Card from "./components/Card";
 import { DataContext } from "./services/DataContext";
-import StockComponent from "./components/StockComponent";
+import Portfolio from "./components/Portfolio";
 
 
 export default function Home() {
@@ -10,11 +9,8 @@ export default function Home() {
 
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <DataContext>
-            <Card>
-              <StockComponent/>
-            </Card>
+            <Portfolio/>
         </DataContext>
-        
       </main>
 
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">

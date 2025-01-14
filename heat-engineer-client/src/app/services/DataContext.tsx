@@ -1,7 +1,7 @@
 'use client';
 import { createContext, ReactElement, useEffect, useState } from "react";
 import HeatEngineerStockModel from "../models/stockModel";
-import useWebsocket from "../components/useWebsocket";
+import useWebsocket from "../hooks/useWebsocket";
 
 const StockContext = createContext<HeatEngineerStockModel | null>(null);
 

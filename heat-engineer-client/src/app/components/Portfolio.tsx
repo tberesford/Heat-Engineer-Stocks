@@ -10,6 +10,7 @@ import { StockContext } from "../services/DataContext";
 const Portfolio: React.FC = () => {
     const context = useContext(StockContext);
     const [error, setError] = useState<string | null>(null);
+    const [sharesToTransact, setShares] = useState(1);
     const [userPortfolio, setNumberOfShares] = useState(0);
     const [userInvestments, setuserInvestments] = useState(0);
     const [userBalance, setUserBalance] = useState(1000);
@@ -27,12 +28,17 @@ const Portfolio: React.FC = () => {
         }
     }, [userInvestments]);
 
+    const inputHandler = (event) => {
+        setShares(Number.parseInt(event.target.value));
+    }
+
     const updateUserPortfolio = (method: "Buy" | "Sell") => {
         if(!context){
             setError("Error purchasing shares - try again later");
         } else {
             try{
-                const saleData: ISale = { sharePrice: context.price, balance: userBalance, position: 0 ,ownedShares: userPortfolio, shares: 1, method: method }
+                console.log(sharesToTransact);
+                const saleData: ISale = { sharePrice: context.price, balance: userBalance, ownedShares: userPortfolio, shares: sharesToTransact, method: method }
                 const updatedValues = ValidateTransaction(saleData);
                 if(typeof(updatedValues) === 'string'){
                     setError(updatedValues);
@@ -48,47 +54,44 @@ const Portfolio: React.FC = () => {
     }
 
     return (
-        <>
-            <div>
+        <div className="grid grid-rows-3 gap-4 text-center text-lg">
+            <Card>
+                <StockComponent/>
+            </Card>
+            <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-4 items-center">
+                {/* Callback function passed to onClick to update portfolio on click */}
+                <ButtonComponent method="Buy" onClick={() => updateUserPortfolio("Buy")}/>
                 <Card>
-                    <StockComponent/>
-                </Card>
-            </div>
-            <div className="grid grid-rows-1 grid-cols-2 gap-16">
-                <Card>
-                    {/* Callback function passed to onClick to update portfolio on click */}
-                    <ButtonComponent method="Buy" onClick={() => updateUserPortfolio("Buy")}/>
-                </Card>
-                <Card>
-                    <ButtonComponent method="Sell" onClick={() => updateUserPortfolio("Sell")}/>                
-                </Card>
-            </div>
-            
-            <div className="grid grid-rows-1">
-                <Card>
-                    <div className="grid grid-rows-3 gap-4 text-center">
-                        <div className="grid grid-cols-1">
-                            <p>Stock Portfolio</p>
-                        </div>
-                        <div className="grid grid-cols-4 gap-6">
-                            <p>Shares</p>
-                            <p>Invested</p>
-                            <p>Available Cash</p>
-                            <p>Total</p>
-                        </div>
-                        <div className="grid grid-cols-4 gap-6 text-center">
-                            <p>{userPortfolio}</p>
-                            <p>{userInvestments}</p>
-                            <p>{userBalance}</p>
-                            <p>{userTotal}</p>
-                        </div>
+                    <div className="grid grid-rows-2 gap-4">
+                        <p>Shares</p>
+                        <input defaultValue={1} placeholder="1" type="number" onChange={inputHandler}/>
                     </div>
                 </Card>
-                
+                <ButtonComponent method="Sell" onClick={() => updateUserPortfolio("Sell")}/>
             </div>
+            
+            <Card>
+                <div className="grid grid-rows-3 gap-4 text-center">
+                    <div className="grid grid-cols-1">
+                        <p>Stock Portfolio</p>
+                    </div>
+                    <div className="grid grid-cols-4 gap-6">
+                        <p>Shares</p>
+                        <p>Invested</p>
+                        <p>Available Cash</p>
+                        <p>Total</p>
+                    </div>
+                    <div className="grid grid-cols-4 gap-6 text-center">
+                        <p>{userPortfolio}</p>
+                        <p>{userInvestments}</p>
+                        <p>{userBalance}</p>
+                        <p>{userTotal}</p>
+                    </div>
+                </div>
+            </Card>
 
             {error ? <Card><div className="text-center text-red-500 font-medium">{error}</div></Card> : null}
-        </>
+        </div>
     )
 }
 

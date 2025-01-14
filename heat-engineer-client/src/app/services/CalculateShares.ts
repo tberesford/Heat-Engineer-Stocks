@@ -23,15 +23,13 @@ const StockCalculator = (saleData: ISale): ISaleResponse => {
     const updatedBalance = UpdateBalance(transactionValue, saleData.balance, method);
 
     let afterSaleShares = 0;
-    let newPosition = saleData.position;
     if(method === "sell"){
         afterSaleShares = saleData.ownedShares - saleData.shares;
         transactionValue = -transactionValue;
     } else if(method === "buy"){
         afterSaleShares = saleData.ownedShares + saleData.shares;
     }
-    newPosition += transactionValue;
-    return {shares: afterSaleShares, value: transactionValue, balance: updatedBalance, position: newPosition};
+    return {shares: afterSaleShares, value: transactionValue, balance: updatedBalance};
 }
 
 const ValidateTransaction = (transactionData: ISale): ISaleResponse | string => {

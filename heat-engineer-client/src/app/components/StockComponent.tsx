@@ -7,17 +7,17 @@ const StockComponent: React.FC = () => {
 
     if(!context){
         return (
-            <>
-                <p>Latest Websocket Stock Price!</p>
-                <p>Loading...</p>
-            </>
+            <div className="grid mt-6">
+                <div className="text-xl">Latest Stock Price!</div>
+                <div className="text-lg">Loading...</div>
+            </div>
         )
     } else {
         return (
-            <>
-                <p>Latest Websocket Stock Price!</p>
-                <p>{context.price.toString()}</p>
-            </>
+            <div className="grid mt-6">
+                <div className="text-xl">Latest Stock Price!</div>
+                <div className="text-lg">{context.price.toString()}</div>
+            </div>
         )
     }
 }

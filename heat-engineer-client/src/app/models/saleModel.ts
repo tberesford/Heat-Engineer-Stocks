@@ -3,13 +3,11 @@ interface ISale {
     sharePrice: number,
     method: string,
     shares: number,
-    balance: number,
-    position: number
+    balance: number
 }
 
 interface ISaleResponse {
     shares: number,
     value: number,
-    balance: number,
-    position: number
+    balance: number
 }

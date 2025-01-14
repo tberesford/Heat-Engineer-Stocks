@@ -1,47 +1,58 @@
+import RoundNumber from "./RoundValue";
 
-
-const CalculateShares = (numberOfShares: number, price: number): number => {
-    return numberOfShares * price;
+const CalculateShares = (numberOfShares: number, sharePrice: number): number => {
+    // Calculate amount of shares bought in value
+    return RoundNumber(numberOfShares * sharePrice);
 }
 
 const UpdateBalance = (saleValue: number, currBalance: number, method: string): number => {
+    // Update the current balance
     if(method === "sell"){
-        return currBalance + saleValue;
+        return RoundNumber(currBalance + saleValue);
     } else if (method === "buy"){
-        return currBalance - saleValue;
+        return RoundNumber(currBalance - saleValue);
     } else {
         throw new Error("Not a valid sale function");
     }
 }
 
-const StockCalculator = (ownedShares: number, price: number, shares: number, method: string, balance: number) => {
+const StockCalculator = (saleData: ISale): ISaleResponse => {
+    // Calculates all new values based on saleData
+    const method = saleData.method.toLowerCase();
+    let transactionValue = CalculateShares(saleData.shares, saleData.sharePrice);
+    const updatedBalance = UpdateBalance(transactionValue, saleData.balance, method);
+
+    let afterSaleShares = 0;
+    let newPosition = saleData.position;
+    if(method === "sell"){
+        afterSaleShares = saleData.ownedShares - saleData.shares;
+        transactionValue = -transactionValue;
+    } else if(method === "buy"){
+        afterSaleShares = saleData.ownedShares + saleData.shares;
+    }
+    newPosition += transactionValue;
+    return {shares: afterSaleShares, value: transactionValue, balance: updatedBalance, position: newPosition};
+}
+
+const ValidateTransaction = (transactionData: ISale): ISaleResponse | string => {
+    // Determines response based on current user Portfolio
     try{
-        method = method.toLowerCase();
-        if(price <= 0){
-            return "Error purchasing shares - try again later";
+        let message;
+        if(transactionData.method.toLowerCase() === "sell" && (transactionData.shares > transactionData.ownedShares || transactionData.ownedShares <= 0)){
+            message = "You do not own enough shares";
+        }
+        if(transactionData.sharePrice <= 0){
+            message = "Error purchasing shares - try again later";
+        }
+        if((transactionData.sharePrice * transactionData.shares > transactionData.balance) && transactionData.method.toLowerCase() === "buy"){
+            message = "Error purchasing shares - not enough funds";
         }
 
-        if(method === "sell"){
-            const afterSaleShares = ownedShares - Math.abs(shares);
-            if(afterSaleShares < 0){
-                return "You do not own enough shares";
-            }
-            const saleValue = CalculateShares(shares, price);
-            const updatedBalance = UpdateBalance(saleValue, balance, method);
-            return [afterSaleShares, saleValue, updatedBalance];
-
-        } else if(method === "buy"){
-            const afterSaleShares = ownedShares + shares;
-            if(price * shares > balance){
-                return "Error purchasing shares - not enough funds";
-            }
-            const purchaseValue = CalculateShares(shares, price);
-            const updatedBalance = UpdateBalance(purchaseValue, balance, method);
-            return [afterSaleShares, purchaseValue, updatedBalance]
-        }
-    } catch (error){
-        return "Internal Server Error";
+        const transactionResult: ISaleResponse = StockCalculator(transactionData);
+        return message ? message : transactionResult;
+    } catch (error) {
+        throw new Error("Something went wrong with transaction");
     }
 }
 
-export default StockCalculator;
+export {StockCalculator, ValidateTransaction};

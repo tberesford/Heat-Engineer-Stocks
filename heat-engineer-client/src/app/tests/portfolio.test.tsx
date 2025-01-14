@@ -1,7 +1,7 @@
 import ButtonComponent from "../components/Button";
 import { render, fireEvent, screen } from "@testing-library/react";
 import '@testing-library/dom';
-import StockCalculator from "../services/CalculateShares";
+import { StockCalculator, ValidateTransaction} from "../services/CalculateShares";
 
 interface ISale {
     ownedShares: number,
@@ -33,31 +33,32 @@ describe("Test User Portfolio", () => {
     });
 
     test("buying shares decreases account balance", () => {
-        const result = StockCalculator(mockPurchaseData.ownedShares, mockPurchaseData.sharePrice, mockPurchaseData.shares, mockPurchaseData.method, mockPurchaseData.balance);
-        expect(result![2]).toBeLessThan(mockPurchaseData.balance);
+        const result: ISaleResponse = StockCalculator(mockPurchaseData); //(mockPurchaseData.ownedShares, mockPurchaseData.sharePrice, mockPurchaseData.shares, mockPurchaseData.method, mockPurchaseData.balance);
+        expect(result.balance).toBeLessThan(mockPurchaseData.balance);
     })
 
     test("buying shares increases number of owned shares", () => {
-        const result = StockCalculator(mockPurchaseData.ownedShares, mockPurchaseData.sharePrice, mockPurchaseData.shares, mockPurchaseData.method, mockPurchaseData.balance);
-        expect(result![0]).toBeGreaterThan(mockPurchaseData.ownedShares);
+        const result = StockCalculator(mockPurchaseData);//(mockPurchaseData.ownedShares, mockPurchaseData.sharePrice, mockPurchaseData.shares, mockPurchaseData.method, mockPurchaseData.balance);
+        expect(result.shares).toBeGreaterThan(mockPurchaseData.ownedShares);
     });
     
     test("shares are bought at the correct price", () => {
-        const result = StockCalculator(mockPurchaseData.ownedShares, mockPurchaseData.sharePrice, mockPurchaseData.shares, mockPurchaseData.method, mockPurchaseData.balance);
-        expect(result).toEqual([2, 100, 0]);
+        const result = StockCalculator(mockPurchaseData);//(mockPurchaseData.ownedShares, mockPurchaseData.sharePrice, mockPurchaseData.shares, mockPurchaseData.method, mockPurchaseData.balance);
+        expect(result.value).toEqual(100);
+        expect(result.balance).toEqual(0);
     });
 
 
     test("cannot buy if you do not have enough money", () => {
-        const result = StockCalculator(mockErrorPurchaseData.ownedShares, mockErrorPurchaseData.sharePrice, mockErrorPurchaseData.shares, mockErrorPurchaseData.method, mockErrorPurchaseData.balance);
+        const result = ValidateTransaction(mockErrorPurchaseData);//(mockErrorPurchaseData.ownedShares, mockErrorPurchaseData.sharePrice, mockErrorPurchaseData.shares, mockErrorPurchaseData.method, mockErrorPurchaseData.balance);
         expect(result).toEqual("Error purchasing shares - not enough funds");
     });
     test("cannot buy if no share price", () => {
-        const result = StockCalculator(mockErrorShareData.ownedShares, mockErrorShareData.sharePrice, mockErrorShareData.shares, mockErrorShareData.method, mockErrorShareData.balance);
+        const result = ValidateTransaction(mockErrorShareData);//(mockErrorShareData.ownedShares, mockErrorShareData.sharePrice, mockErrorShareData.shares, mockErrorShareData.method, mockErrorShareData.balance);
         expect(result).toEqual("Error purchasing shares - try again later");
     });
     test("cannot sell shares when owned is zero", () => {
-        const result = StockCalculator(mockSaleData.ownedShares, mockSaleData.sharePrice, mockSaleData.shares, mockSaleData.method, mockSaleData.balance);
+        const result = ValidateTransaction(mockSaleData);//(mockSaleData.ownedShares, mockSaleData.sharePrice, mockSaleData.shares, mockSaleData.method, mockSaleData.balance);
         expect(result).toEqual("You do not own enough shares"); 
     });
 })

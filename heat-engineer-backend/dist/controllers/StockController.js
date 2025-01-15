@@ -27,7 +27,6 @@ class StockController {
             setInterval(() => __awaiter(this, void 0, void 0, function* () {
                 const stockResponse = yield axios_1.default.get(this.url);
                 const stockData = (0, ValidateData_1.default)(stockResponse.data);
-                console.log(stockData);
                 this.producer.send({
                     topic: "first_topic",
                     messages: [{ value: JSON.stringify(stockData) }]

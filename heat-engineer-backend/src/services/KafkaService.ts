@@ -1,6 +1,7 @@
-import { Kafka, Partitioners } from "kafkajs";
+import { Consumer, Kafka, Partitioners } from "kafkajs";
 
 let kafka: Kafka;
+let consumer: Consumer;
 
 const Broker = () => {
     if(!kafka){
@@ -24,8 +25,10 @@ const StockProducer = (kafka: Kafka) => {
 
 const StockConsumer = (kafka: Kafka) => {
     // Consumer subscribed to topic
-    const consumer = kafka.consumer( {groupId: "test-group"} );
-    consumer.subscribe({topic: "first_topic", fromBeginning: true});
+    if(!consumer){
+        consumer = kafka.consumer( {groupId: "test-group"} );
+        consumer.subscribe({topic: "first_topic", fromBeginning: true});
+    }
     return consumer;
 }
 

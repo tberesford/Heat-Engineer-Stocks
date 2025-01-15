@@ -31,13 +31,6 @@ stockRouter.post("/stock/:price/time/:timestamp/key/:symbol", (req, res) => __aw
         const stock = ((_a = req.params.price) === null || _a === void 0 ? void 0 : _a.toString()) || "";
         const time = req.params.timestamp;
         const key = req.params.symbol;
-        console.log({ stock, time, key });
-        // const emit = await Producer(kafka, stock);
-        // if(emit){
-        //     res.send({message: "Test", status: 200});
-        // } else {
-        //     throw new Error("Internal server error");
-        // }
     }
     catch (error) {
         throw new Error("Failed to emit to data stream");

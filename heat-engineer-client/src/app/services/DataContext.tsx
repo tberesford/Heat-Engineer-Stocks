@@ -8,11 +8,11 @@ const StockContext = createContext<HeatEngineerStockModel | null>(null);
 const DataContext: React.FC<{children: ReactElement}> = ({children}) => {
     const [data, setData] = useState<HeatEngineerStockModel | null>(null);
     useWebsocket(setData);
-    useEffect(() => {
-        if(data){
-            console.log(`Update to data - ${data}`);
-        }
-    }, [data])
+    // useEffect(() => {
+    //     if(data){
+    //         console.log(`Update to data - ${data}`);
+    //     }
+    // }, [data])
     
     return (
         <StockContext.Provider value={data}>

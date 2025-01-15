@@ -35,6 +35,8 @@ const Portfolio: React.FC = () => {
     const updateUserPortfolio = (method: "Buy" | "Sell") => {
         if(!context){
             setError("Error purchasing shares - try again later");
+        } else if(sharesToTransact < 1){
+            setError("Error purchasing shares - please ensure positive number is used");
         } else {
             try{
                 console.log(sharesToTransact);

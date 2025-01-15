@@ -19,7 +19,6 @@ class StockController {
         setInterval(async () => {
             const stockResponse = await axios.get(this.url);
             const stockData = ValidateStockData<HeatEngineerStockModel>(stockResponse.data);
-            console.log(stockData);
             this.producer.send(
                 {
                     topic: "first_topic",

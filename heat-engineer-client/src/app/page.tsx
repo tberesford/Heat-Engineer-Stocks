@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { DataContext } from "./services/DataContext";
 import Portfolio from "./components/Portfolio";
 

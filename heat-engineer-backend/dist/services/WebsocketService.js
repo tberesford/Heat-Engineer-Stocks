@@ -22,17 +22,26 @@ class WebService {
     }
     onConnection() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.consumer.connect();
             this.webSocket.on("connection", (wss) => {
-                console.log("Websocket connected");
-                this.consumer.run({
-                    eachMessage: (_a) => __awaiter(this, [_a], void 0, function* ({ topic, message, partition }) {
-                        var _b;
-                        const stockUpdate = ((_b = message.value) === null || _b === void 0 ? void 0 : _b.toString()) || "";
-                        const stockTime = message.timestamp;
-                        wss.send(stockUpdate);
-                    })
+                wss.on("close", () => {
+                    console.log("Websocket closed");
                 });
+            });
+            this.consumer.run({
+                eachMessage: (_a) => __awaiter(this, [_a], void 0, function* ({ topic, message, partition }) {
+                    var _b;
+                    const stockUpdate = ((_b = message.value) === null || _b === void 0 ? void 0 : _b.toString()) || "";
+                    const stockTime = message.timestamp;
+                    this.webSocket.clients.forEach((client) => {
+                        client.send(stockUpdate);
+                    });
+                })
+            });
+            this.consumer.on("consumer.disconnect", () => {
+                console.log("Consumer disconnected");
+            });
+            this.consumer.on("consumer.crash", () => {
+                console.log("Consumer crashed");
             });
         });
     }

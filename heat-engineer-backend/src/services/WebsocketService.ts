@@ -14,16 +14,27 @@ class WebService {
     }
 
     async onConnection() {
-        await this.consumer.connect();
+        
         this.webSocket.on("connection", (wss) => {
-            console.log("Websocket connected");
-            this.consumer.run({
-                eachMessage: async ({topic, message, partition}) => {
-                    const stockUpdate = message.value?.toString() || "";
-                    const stockTime = message.timestamp;
-                    wss.send(stockUpdate); 
-                }
+            wss.on("close", () => {
+                console.log("Websocket closed");
             })
+        })
+        this.consumer.run({
+            eachMessage: async ({topic, message, partition}) => {
+                const stockUpdate = message.value?.toString() || "";
+                const stockTime = message.timestamp;
+                this.webSocket.clients.forEach((client) => {
+                    client.send(stockUpdate);
+                })
+                 
+            }
+        })
+        this.consumer.on("consumer.disconnect", () => {
+            console.log("Consumer disconnected");
+        })
+        this.consumer.on("consumer.crash", () => {
+            console.log("Consumer crashed");
         })
     }
 }

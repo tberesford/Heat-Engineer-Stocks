@@ -13,8 +13,8 @@ class StockController {
         this.producer = StockProducer(this.kafka);
     }
 
-    async onInterval(){
-        await this.producer.connect();        
+    async onInterval(){    
+        await this.producer.connect();
         setInterval(async () => {
             try{
                 const stockResponse = await Fetch(this.url);
@@ -26,7 +26,8 @@ class StockController {
                     }
                 );
             } catch (error){
-                throw new Error("Internal server error");
+                // Handle error gracefully
+                console.log(error);
             }
         }, 5000);
     }

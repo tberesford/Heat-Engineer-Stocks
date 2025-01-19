@@ -19,25 +19,18 @@ class StockController {
         // private kafka: Kafka;
         // private producer: Producer;
         this.url = "http://localhost:3001/api/stock/current";
-        // this.kafka = Broker();
-        // this.producer = StockProducer(this.kafka);
+        //     this.kafka = Broker();
+        //     this.producer = StockProducer(this.kafka);
     }
     onInterval() {
         return __awaiter(this, void 0, void 0, function* () {
-            // await this.producer.connect();        
             setInterval(() => __awaiter(this, void 0, void 0, function* () {
                 try {
                     const stockResponse = yield (0, FetchService_1.default)(this.url);
-                    const stockData = (0, ValidateData_1.default)(stockResponse.data);
-                    // this.producer.send(
-                    //     {
-                    //         topic: "first_topic",
-                    //         messages: [{value: JSON.stringify(stockData)}]
-                    //     }
-                    // );
+                    const stockData = (0, ValidateData_1.default)(stockResponse);
                 }
                 catch (error) {
-                    throw new Error("Internal server error");
+                    console.log(error);
                 }
             }), 5000);
         });

@@ -25,15 +25,4 @@ stockRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.send("Internal Server Error");
     }
 }));
-stockRouter.post("/stock/:price/time/:timestamp/key/:symbol", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    try {
-        const stock = ((_a = req.params.price) === null || _a === void 0 ? void 0 : _a.toString()) || "";
-        const time = req.params.timestamp;
-        const key = req.params.symbol;
-    }
-    catch (error) {
-        throw new Error("Failed to emit to data stream");
-    }
-}));
 exports.default = stockRouter;

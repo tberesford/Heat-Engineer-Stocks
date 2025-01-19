@@ -6,6 +6,7 @@ import ButtonComponent from "./Button";
 import RoundNumber from "../services/RoundValue";
 import { ValidateTransaction } from "../services/CalculateShares";
 import { StockContext } from "../services/DataContext";
+import { type } from "node:os";
 
 const Portfolio: React.FC = () => {
     const context = useContext(StockContext);
@@ -35,11 +36,10 @@ const Portfolio: React.FC = () => {
     const updateUserPortfolio = (method: "Buy" | "Sell") => {
         if(!context){
             setError("Error purchasing shares - try again later");
-        } else if(sharesToTransact < 1){
+        } else if(sharesToTransact < 1 || sharesToTransact.toString() === 'NaN'){
             setError("Error purchasing shares - please ensure positive number is used");
         } else {
             try{
-                console.log(sharesToTransact);
                 const saleData: ISale = { sharePrice: context.price, balance: userBalance, ownedShares: userPortfolio, shares: sharesToTransact, method: method }
                 const updatedValues = ValidateTransaction(saleData);
                 if(typeof(updatedValues) === 'string'){

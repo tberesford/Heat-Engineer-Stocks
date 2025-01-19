@@ -14,14 +14,4 @@ stockRouter.get("/", async (req: Request, res: Response) => {
     }
 });
 
-stockRouter.post("/stock/:price/time/:timestamp/key/:symbol", async (req: Request, res: Response) => {
-    try{
-        const stock = req.params.price?.toString() || "";
-        const time = req.params.timestamp;
-        const key = req.params.symbol;
-    } catch (error) {
-        throw new Error("Failed to emit to data stream");
-    }
-})
-
 export default stockRouter;

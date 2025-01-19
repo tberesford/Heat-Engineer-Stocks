@@ -27,9 +27,14 @@ class StockController {
             // await this.producer.connect();        
             setInterval(() => __awaiter(this, void 0, void 0, function* () {
                 try {
-                    const stockResponse = yield (0, FetchService_1.default)(this.url); //axios.get(this.url);
-                    const stockData = (0, ValidateData_1.default)(stockResponse); //ValidateStockData<HeatEngineerStockModel>(stockResponse);
-                    console.log(stockData);
+                    const stockResponse = yield (0, FetchService_1.default)(this.url);
+                    const stockData = (0, ValidateData_1.default)(stockResponse.data);
+                    // this.producer.send(
+                    //     {
+                    //         topic: "first_topic",
+                    //         messages: [{value: JSON.stringify(stockData)}]
+                    //     }
+                    // );
                 }
                 catch (error) {
                     throw new Error("Internal server error");

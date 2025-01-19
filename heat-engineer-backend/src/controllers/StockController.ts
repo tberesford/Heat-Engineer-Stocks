@@ -18,8 +18,13 @@ class StockController {
         setInterval(async () => {
             try{
                 const stockResponse = await Fetch(this.url);
-                const stockData = ValidateStockData(stockResponse);
-                console.log(stockData);
+                const stockData = ValidateStockData(stockResponse.data);
+                this.producer.send(
+                    {
+                        topic: "first_topic",
+                        messages: [{value: JSON.stringify(stockData)}]
+                    }
+                );
             } catch (error){
                 throw new Error("Internal server error");
             }

@@ -17,7 +17,7 @@ class StockController {
         await this.producer.connect();
         setInterval(async () => {
             try{
-                const stockResponse = await Fetch(this.url);
+                const stockResponse = await axios.get(this.url);
                 const stockData = ValidateStockData(stockResponse.data);
                 this.producer.send(
                     {

@@ -1,7 +1,14 @@
+import { z } from 'zod';
 
-function ValidateStockData<T> (data: any): T {
+const StockDataSchema = z.object({
+    symbol: z.string(),
+    price: z.number(),
+    timestamp: z.number()
+  });
+
+function ValidateStockData (data: any) {
     try {
-        return data as T;
+        return StockDataSchema.parse(data);
     } catch (error) {
         throw new Error("Data not in correct format");
     }

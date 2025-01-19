@@ -1,8 +1,7 @@
 import { Kafka, Producer } from "kafkajs";
 import { Broker, StockProducer } from "../services/KafkaService";
-import axios from "axios";
 import ValidateStockData from "../services/ValidateData";
-import HeatEngineerStockModel from "../models/stockModel";
+import Fetch from "../services/FetchService";
 
 class StockController {
     private kafka: Kafka;
@@ -17,14 +16,13 @@ class StockController {
     async onInterval(){
         await this.producer.connect();        
         setInterval(async () => {
-            const stockResponse = await axios.get(this.url);
-            const stockData = ValidateStockData<HeatEngineerStockModel>(stockResponse.data);
-            this.producer.send(
-                {
-                    topic: "first_topic",
-                    messages: [{value: JSON.stringify(stockData)}]
-                }
-            );
+            try{
+                const stockResponse = await Fetch(this.url);
+                const stockData = ValidateStockData(stockResponse);
+                console.log(stockData);
+            } catch (error){
+                throw new Error("Internal server error");
+            }
         }, 5000);
     }
 

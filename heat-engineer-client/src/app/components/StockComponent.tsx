@@ -16,7 +16,7 @@ const StockComponent: React.FC = () => {
         return (
             <div className="grid mt-6">
                 <div className="text-xl">Latest Stock Price!</div>
-                <div className="text-lg">{context.price.toString()}</div>
+                <div className="text-lg">£{context.price.toString()}</div>
             </div>
         )
     }
